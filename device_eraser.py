@@ -249,17 +249,9 @@ def run_module(
         cleaner     = cleaner_cls(drive, serial, dry_run, logger)
         raw         = cleaner.run()
 
-        if isinstance(raw, list):
-        # Каждый элемент — dict с ключами found/cleaned/errors
-            result.found   = sum(r.get("found",   0)  for r in raw if isinstance(r, dict))
-            result.cleaned = sum(r.get("cleaned", 0)  for r in raw if isinstance(r, dict))
-            result.errors  = [e for r in raw if isinstance(r, dict) for e in r.get("errors", [])]
-        elif isinstance(raw, dict):
-            result.found   = raw.get("found",   0)
-            result.cleaned = raw.get("cleaned", 0)
-            result.errors  = raw.get("errors",  [])
-        else:
-            result.errors.append(f"Неизвестный тип ответа модуля: {type(raw)}")
+        result.found  = raw.get("found",  0)
+        result.erased = raw.get("erased", 0)
+        result.errors = raw.get("errors", [])
         result.success = True
 
         if result.errors:
@@ -400,3 +392,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+  
