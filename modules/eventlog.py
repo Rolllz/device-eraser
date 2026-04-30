@@ -241,7 +241,17 @@ class EventLogScanner:
         self.dry_run      = dry_run
         self.backup       = backup
         self._log_paths   = self._resolve_log_paths(extra_logs or [])
-
+    
+    def run(self) -> dict:
+        """Единая точка входа — сканирование + зачистка."""
+        hits = self.scan()
+        erased, errors = (0, []) if self.dry_run else self.zero(hits)
+        return {
+            "found":   len(hits),
+            "cleaned": erased,
+            "errors":  errors,
+        }
+  
     # ── разрешение путей ──────────────────────────────────────────────────────
 
     def _resolve_log_paths(self, extra: list[str]) -> list[Path]:
